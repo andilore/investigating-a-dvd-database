@@ -23,15 +23,13 @@ ORDER BY 2,1
 
 /* Query 2 - query used for second insight 
 Looking at these family-friendly movies as defined in Query 1, how does the lengths of rental duration COMPARE to the duration that all movies are rented for? 
-Provide a table with the movie title, category name, rental duration, and the quartile of the average rental duration (in the number of days) across ALL CATEGORIES
-(i.e. the average rental duration across ALL movie categories, not just the family friendly movie categories)
-
+Provide a table that shows the distribution of movie rental durations in each category AMONGST the four quartiles
+(where the quartiles are determined by movie rental durations across ALL categories).
 */
 
-SELECT *
+SELECT t1.name, t1.standard_quartile, COUNT(t1.standard_quartile)
 FROM
-        (SELECT DISTINCT(f.title), c.name, f.rental_duration,
-               NTILE(4) OVER (ORDER BY AVG(f.rental_duration)) AS standard_quartile
+        (SELECT f.title, c.name, f.rental_duration, NTILE(4) OVER (ORDER BY f.rental_duration) AS standard_quartile
         FROM film f
         JOIN film_category fc
         ON f.film_id = fc.film_id
@@ -40,6 +38,9 @@ FROM
         GROUP BY 1,2,3	
         ORDER BY 4,1) AS t1
 WHERE (name = 'Animation') OR (name = 'Children') OR (name = 'Classics') OR (name = 'Comedy') OR (name = 'Family') OR (name = 'Music')
+GROUP BY 1,2
+ORDER BY 1,2
+
 
 
 /* Query 3 - query used for third insight 
